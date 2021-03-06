@@ -1,63 +1,59 @@
 from rest_framework import serializers
 
 from products.models import (Category, Product, Sale,
-                             Attribute,
                              )
 import django_filters
 
-class SaleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Sale
-        fields = ['name', 'percent']
-
-
-class FilterCategorySerializer(serializers.ListSerializer):
-    def to_representation(self, data):
-        data = data.filter(parent=None)
-        return super().to_representation(data)
-
-
-class RecursiveSerializer(serializers.Serializer):
-    def to_representation(self, value):
-        serializer = self.parent.parent.__class__(value, context=self.context)
-        return serializer.data
-
 
 class CategorySerializer(serializers.ModelSerializer):
-    children = RecursiveSerializer(many=True)
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     class Meta:
-        list_serializer_class = FilterCategorySerializer
         model = Category
-        fields = ['name', 'children']
+        fields = ['name', 'url']
 
 
-class ProductListSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
-    sales = SaleSerializer(read_only=True, many=True)
+class ProductsListSerializer(serializers.ModelSerializer):
+    category = serializers.CharField(source='category.name', read_only=True)
+    sales = serializers.DictField(source='get_available_sales')
     total_price = serializers.SerializerMethodField()
+    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     class Meta:
         model = Product
         fields = ['slug', 'name', 'price',
                   'category', 'total_price', 'sales',
+                  'id', 'url',
                   ]
-    
+        read_only_fields = ('price', 'slug')
+
     def get_total_price(self, obj):
         return obj.calculate_price_with_sale()
 
 
+class ProductCreateSerializer(serializers.ModelSerializer):
+    """
+        Using in CartItemCreateSerializer for adding
+        product in cart
+    """
+    class Meta:
+        model = Product
+        fields = ['slug']
+
+
 class ProductRetrieveSerializer(serializers.ModelSerializer):
-    category = CategorySerializer(read_only=True)
+    category = serializers.CharField(source='category.name', read_only=True)
     total_price = serializers.SerializerMethodField()
-    sales = SaleSerializer(read_only=True, many=True)
+    sales = serializers.CharField(source='get_available_sales')
 
     class Meta:
         model = Product
         fields = ['slug', 'name', 'price',
                   'category', 'total_price', 'sales',
+                  'id',
                   ]
         lookup_field = 'slug'
+        read_only_fields = ('price', 'slug')
 
     def get_total_price(self, obj):
         return obj.calculate_price_with_sale()

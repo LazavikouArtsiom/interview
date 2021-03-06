@@ -37,11 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'rest_framework',
+    'social_django',
+    # 'djoser',
+    'django_extensions',
+    'debug_toolbar',
+
     'products',
     'cart',
     'orders',
     'users',
-    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -74,6 +81,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+INTERNAL_IPS = [
+    '127.0.0.1',
+]
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -110,19 +120,35 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     )
+# }
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_POSTGRES_JSONFIELD = True
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+SOCIAL_AUTH_USER_FIELDS = ['username']
+
+SOCIAL_AUTH_GITHUB_KEY = '148c6f80c6698721be13'
+SOCIAL_AUTH_GITHUB_SECRET = '528c15552cb3e8c45d6d3bab0451be448737b002'
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+TEST_DISCOVER_PATTERN = "test*.py"
 
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'ru-ru'
+
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 

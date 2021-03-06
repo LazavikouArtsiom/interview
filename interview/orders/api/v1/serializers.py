@@ -12,15 +12,15 @@ class OrderCreateSerializer(serializers.ModelSerializer):
 
 
 class OrderListSerializer(serializers.ModelSerializer):
-    cart = CartSerializer(read_only=True)
+    cart = serializers.CharField(source='cart.id')
 
     class Meta:
         model = Order
-        fields = ['delivery',
+        fields = ['id',
+                  'delivery',
                   'delivery_address',
                   'phone_number',
                   'cart',
                   'status',
                   'total_cost',
                   ]
-

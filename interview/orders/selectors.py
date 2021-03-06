@@ -8,4 +8,4 @@ def get_orders_by_user(user: User) -> QuerySet[Order]:
     """
         Filtering Orders by throwed user instance
     """
-    return Order.objects.filter(user=user)
+    return Order.objects.select_related('user', 'cart').filter(user=user)

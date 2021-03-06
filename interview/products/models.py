@@ -20,41 +20,9 @@ class Sale(models.Model):
         return self.name
 
 
-class Manufacturer(models.Model):
-    name = models.CharField(
-        max_length=255, null=True, blank=True)
-    country = models.CharField(
-        max_length=150, null=True, blank=True)
-
-    class Meta:
-        ordering = ('name', 'country')
-
-    def __str__(self):
-        return self.name
-
-
-class Attribute(models.Model):
-    name = models.CharField(max_length=255, null=True, blank=True)
-
-    class Meta:
-        ordering = ('name',)
-        verbose_name = 'Attribute'
-        verbose_name_plural = 'Attributes'
-
-    def __str__(self):
-        return self.name
-
-
 class Category(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, db_index=True, unique=True)
-    parent = models.ForeignKey('self',
-                               on_delete=models.SET_NULL,
-                               blank=True,
-                               null=True,
-                               verbose_name='Категория-родитель',
-                               related_name='children'
-                               )
 
     class Meta:
         ordering = ('name',)
@@ -64,25 +32,25 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        return reverse('products-list-by-category', kwargs={'category_slug': self.slug})
+
 
 class Product(models.Model):
-    name = models.CharField(max_length=150, db_index=True,
-                            verbose_name='Название')
+    name = models.CharField(max_length=150, db_index=True,)
     slug = models.SlugField(max_length=150, db_index=True, unique=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2,
-                                verbose_name='Цена')
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category,
-                                 related_name='category',
                                  null=True,
                                  blank=True,
-                                 verbose_name='Категория',
                                  on_delete=models.CASCADE,
+                                 related_name='category',
                                  )
-    sales = models.ManyToManyField(Sale, 
+    sales = models.ManyToManyField(Sale,
                                    related_name='sales',
-                                   verbose_name='Скидка',
                                    blank=True
                                    )
+
     class Meta:
         ordering = ('name',)
         index_together = ('id', 'slug')
@@ -96,16 +64,9 @@ class Product(models.Model):
         sales_percent = sum([sale.percent for sale in self.sales.all()])
         return float(self.price) - (float(self.price) * (0.01 * sales_percent))
 
+    def get_absolute_url(self):
+        return reverse('product-detail', kwargs={'category_slug': self.category.slug,
+                                                 'slug': self.slug})
 
-class ProductAttribute(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    attribute = models.ForeignKey(Attribute,
-                                  null=True,
-                                  on_delete=models.SET_NULL)
-    value = models.CharField(max_length=255)
-
-    class Meta:
-        verbose_name = 'Product attribute'
-
-    def __str__(self):
-        return f'{self.product.name} | {self.attribute.name} | {self.value}'
+    def get_available_sales(self):
+        return {sale.name: sale.percent for sale in self.sales.all()}

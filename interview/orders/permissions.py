@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from .services import _get_cart_by_user, _get_all_cart_items_for_cart
 
+
 class hasItemsInCart(permissions.BasePermission):
     """
        User must have items in cart to create order
@@ -16,5 +17,3 @@ class hasItemsInCart(permissions.BasePermission):
                 return False
             else:
                 return True
-
-        

@@ -21,11 +21,13 @@ class Order(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         null=True,
+        related_name='user',
     )
     cart = models.OneToOneField(
         Cart,
         on_delete=models.CASCADE,
         null=True,
+        related_name='cart',
     )
 
     status = models.CharField(

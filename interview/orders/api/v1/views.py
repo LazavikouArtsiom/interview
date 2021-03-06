@@ -12,21 +12,22 @@ from orders.permissions import hasItemsInCart
 
 
 class OrderListCreateApi(ListCreateAPIView):
-    serializer_class = OrderCreateSerializer
     permission_classes = (hasItemsInCart,)
 
     def post(self, request, *args, **kwargs):
         create_order(self, self.request.user)
-        queryset = self.get_queryset()
-        serializer = OrderListSerializer(queryset, many=True)
-        return Response(serializer.data)
+        return super().list(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = OrderListSerializer(queryset, many=True)
-        return Response(serializer.data)
-        
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
         user = self.request.user
         return get_orders_by_user(user)
-    
+
+    def get_serializer_class(self):
+        if hasattr(self.request, 'method'):
+            if self.request.method == 'GET':
+                return OrderListSerializer
+            if self.request.method == 'POST':
+                return OrderCreateSerializer
