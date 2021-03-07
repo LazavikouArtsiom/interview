@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from products.models import (Category, Product, Sale)
 from products.services import calculate_price_with_sales
-import django_filters
 
 
 class CategorySerializer(serializers.ModelSerializer):

@@ -9,7 +9,7 @@ import debug_toolbar
 apipatterns_v1 = [
     path('cart/', include('cart.api.v1.urls')),
     path('order/', include('orders.api.v1.urls')),
-    # url(r'^auth/', include('djoser.urls')),
+    url(r'^auth/', include('djoser.urls')),
     path('', include('products.api.v1.urls')),
 ]
 
