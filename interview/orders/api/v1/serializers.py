@@ -1,8 +1,6 @@
 from rest_framework import serializers
 
 from orders.models import Order
-from cart.api.v1.serializers import CartSerializer
-
 
 class OrderCreateSerializer(serializers.ModelSerializer):
 
@@ -11,7 +9,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
         fields = ['delivery', 'delivery_address', 'phone_number']
 
 
-class OrderListSerializer(serializers.ModelSerializer):
+class OrdersListSerializer(serializers.ModelSerializer):
     cart = serializers.CharField(source='cart.id')
 
     class Meta:

@@ -4,14 +4,6 @@ from cart.models import CartItem, Cart
 from products.api.v1.serializers import ProductsListSerializer, ProductCreateSerializer
 
 
-class CartSerializer(serializers.ModelSerializer):
-    products = ProductsListSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Cart
-        exclude = ['id', 'user', 'status']
-
-
 class CartItemCreateSerializer(serializers.ModelSerializer):
     product = ProductCreateSerializer()
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -34,7 +26,7 @@ class CartItemsSerializer(serializers.ModelSerializer):
                   ]
 
 
-class CartItemsDetailSerializer(serializers.ModelSerializer):
+class CartItemDetailSerializer(serializers.ModelSerializer):
     product = ProductsListSerializer(read_only=True)
 
     class Meta:

@@ -4,7 +4,7 @@ from users.models import User
 from cart.models import Cart, CartItem
 from products.models import Product, Category
 from orders.models import Order
-from orders.services import (_change_cart_status, _create_new_cart_for_user,
+from orders.services import (_change_cart_status_to_old, _create_new_cart_for_user,
                              _get_total_cost_for_cart)
 
 
@@ -27,7 +27,7 @@ class OrdersServicesTest(TestCase):
                                 quantity=2,
                                 )
 
-    def test_get_total_price(self):
+    def test_get_total_cost_for_cart(self):
         self.assertEqual(_get_total_cost_for_cart(self.cart), 2000)
 
     def test_create_new_cart_for_user(self):
@@ -35,6 +35,6 @@ class OrdersServicesTest(TestCase):
                       Cart.objects.filter(user=self.user)
                       )
 
-    def test_change_cart_status(self):
-        _change_cart_status(self.cart)
+    def test_change_cart_status_to_old(self):
+        _change_cart_status_to_old(self.cart)
         self.assertEqual(self.cart.status, 'old')

@@ -7,7 +7,7 @@ from orders.models import Order
 from cart.selectors import _get_cart_by_user
 from orders.services import create_order
 from orders.selectors import get_orders_by_user
-from .serializers import OrderCreateSerializer, OrderListSerializer
+from .serializers import OrderCreateSerializer, OrdersListSerializer
 from orders.permissions import hasItemsInCart
 
 
@@ -28,6 +28,6 @@ class OrderListCreateApi(ListCreateAPIView):
     def get_serializer_class(self):
         if hasattr(self.request, 'method'):
             if self.request.method == 'GET':
-                return OrderListSerializer
+                return OrdersListSerializer
             if self.request.method == 'POST':
                 return OrderCreateSerializer

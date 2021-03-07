@@ -3,7 +3,7 @@ from django.urls import reverse
 from products.models import Category, Product
 
 
-class ProductRetrieveApiTest(TestCase):
+class ProductsViewsTest(TestCase):
     def setUp(self):
         self.category = Category.objects.create(name='name',
                                                 slug='slug',

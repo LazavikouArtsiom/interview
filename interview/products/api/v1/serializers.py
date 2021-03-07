@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from products.models import (Category, Product, Sale,
-                             )
+from products.models import (Category, Product, Sale)
+from products.services import calculate_price_with_sales
 import django_filters
 
 
@@ -28,7 +28,7 @@ class ProductsListSerializer(serializers.ModelSerializer):
         read_only_fields = ('price', 'slug')
 
     def get_total_price(self, obj):
-        return obj.calculate_price_with_sale()
+        return calculate_price_with_sales(product=obj)
 
 
 class ProductCreateSerializer(serializers.ModelSerializer):
@@ -56,4 +56,4 @@ class ProductRetrieveSerializer(serializers.ModelSerializer):
         read_only_fields = ('price', 'slug')
 
     def get_total_price(self, obj):
-        return obj.calculate_price_with_sale()
+        return calculate_price_with_sales(product=obj)

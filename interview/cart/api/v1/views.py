@@ -6,10 +6,11 @@ from rest_framework.decorators import permission_classes
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import status
 
 
 from cart.models import Cart
-from .serializers import CartItemsSerializer, CartItemsDetailSerializer, CartItemCreateSerializer
+from .serializers import CartItemsSerializer, CartItemDetailSerializer, CartItemCreateSerializer
 from cart.selectors import get_cart_items_by_user
 from cart.services import create_new_cart_item_for_user
 
@@ -38,9 +39,20 @@ class CartItemsListCreateApi(ListCreateAPIView):
 
 @permission_classes([IsAuthenticated])
 class CartItemsRetrieveUpdateDestoyApi(RetrieveUpdateDestroyAPIView):
-    serializer_class = CartItemsDetailSerializer
+    serializer_class = CartItemDetailSerializer
     lookup_field = 'id'
 
     def get_queryset(self):
         user = self.request.user
         return get_cart_items_by_user(user)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            cart_item = self.get_object()
+            quantity = int(request.data['quantity'])
+            cart_item.quantity = quantity
+            cart_item.save()
+            return Response(status=status.HTTP_302_FOUND)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        

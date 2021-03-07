@@ -2,7 +2,6 @@ from django.db.models.query import QuerySet
 from django.contrib.auth.models import User
 
 from cart.selectors import _get_cart_by_user, _get_all_cart_items_for_cart
-from orders.models import Order
 from cart.models import Cart
 
 
@@ -12,7 +11,7 @@ def _get_total_cost_for_cart(cart_id: int) -> int:
         price 
     """
     cart_items = _get_all_cart_items_for_cart(cart_id)
-    price = sum([cart_item.product.price *
+    price = sum([cart_item.product.price_with_sales *
                  cart_item.quantity for cart_item in cart_items])
     return price
 
@@ -25,19 +24,19 @@ def _create_new_cart_for_user(user: User) -> None:
     return Cart.objects.create(user=user)
 
 
-def _change_cart_status(cart: Cart) -> None:
+def _change_cart_status_to_old(cart: Cart) -> None:
     """
         Changes cart status to old to avoid
         more then one use of this cart in order
     """
     cart.status = 'old'
-    cart.save()
 
 
-def create_order(self, user: User) -> QuerySet[Order]:
+def create_order(self, user: User) -> QuerySet:
+    from orders.models import Order
     """
         Creates new Order
-        changes cart_status using _change_cart_status()
+        changes cart_status using _change_cart_status_to_old()
         creates new cart for user using _create_new_cart_for_user()
     """
     cart = _get_cart_by_user(user)
@@ -56,6 +55,6 @@ def create_order(self, user: User) -> QuerySet[Order]:
                                  delivery_address=delivery_address,
                                  phone_number=phone_number,
                                  total_cost=total_cost)
-    _change_cart_status(cart)
+    _change_cart_status_to_old(cart)
     _create_new_cart_for_user(user)
     return order

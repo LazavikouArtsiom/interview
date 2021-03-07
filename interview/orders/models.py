@@ -2,7 +2,8 @@ from django.db import models
 from django.conf import settings
 
 from cart.models import Cart
-
+from django.db.models.signals import post_save
+from .signals import calculate_total_cost_for_order
 
 class Order(models.Model):
     NEW = "new"
@@ -41,3 +42,12 @@ class Order(models.Model):
 
     def __str__(self):
         return f'{self.id} | order'
+
+    def save(self, *args, **kwargs):
+        from orders.services import _get_total_cost_for_cart
+        self.total_cost = _get_total_cost_for_cart(cart_id=self.cart.id)
+        self.cart.status = 'old'
+        self.cart.save()
+        super(Order, self).save(*args, **kwargs)
+
+post_save.connect(calculate_total_cost_for_order, sender=Order)

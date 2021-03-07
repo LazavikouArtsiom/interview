@@ -6,7 +6,7 @@ from products.api.v1.serializers import (CategorySerializer,
 from products.models import (Sale, Category, Product)
 
 
-class GetProductsBySlugTest(TestCase):
+class ProductsSerializersTest(TestCase):
     def setUp(self):
         self.category = Category.objects.create(name='name',
                                                 slug='slug',
