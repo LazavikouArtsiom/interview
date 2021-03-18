@@ -1,0 +1,19 @@
+.catalog{
+    display: flex;
+    justify-content: space-between;
+}
+
+.catalogItems{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.right {
+    width: 75%;
+    background-color: rgb(255, 0, 0);
+}
+
+.pagination {
+    display: flex;
+}

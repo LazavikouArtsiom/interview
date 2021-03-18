@@ -1,0 +1,10 @@
+.paginationItem{
+    height: 20px;
+    width: 20px;
+    border-right: 1px solid rgb(168, 168, 168);
+    background-color: rgba(255, 255, 255, 0.459);
+}
+
+.paginationItem a{
+    padding-left: 6px;
+}
