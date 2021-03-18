@@ -14,6 +14,7 @@ const Catalog = () => {
           <CatalogItem />
           <CatalogItem />
           <CatalogItem />
+          <CatalogItem />
         </div>
         <Pagination />
       </div>

@@ -1,19 +1,18 @@
 .catalog{
     display: flex;
     justify-content: space-between;
+    min-height: 85vh;
 }
 
 .catalogItems{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    margin-left: 115px;
+    margin-top: 20px;
 }
 
 .right {
     width: 75%;
-    background-color: rgb(255, 0, 0);
-}
-
-.pagination {
-    display: flex;
+    background-color: #f4f9f4;
 }
